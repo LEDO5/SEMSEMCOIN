@@ -1,0 +1,11 @@
+{
+  "name": "semsem",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "vite": "^5.3.4"
+  }
+}
