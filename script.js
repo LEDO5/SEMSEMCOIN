@@ -30,6 +30,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function showCustomMessage(message) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.style.display = "block";
+    setTimeout(() => {
+      notification.style.display = "none";
+    }, 5000); // Hide after 5 seconds
+  }
+
   claimButton.addEventListener("click", () => {
     const now = Date.now();
     if (now - lastClaimTime >= CLAIM_INTERVAL) {
@@ -38,18 +47,21 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("lastClaimTime", now);
       updatePoints();
       updateTimer();
-      location.reload(); // Refresh the page immediately after claiming points
+      showCustomMessage("You have successfully claimed 1000 points. The page will refresh now.");
+      setTimeout(() => {
+        location.reload(); // Refresh the page after a short delay to show the message
+      }, 1000); // 1 second delay
     } else {
-      alert("You can only claim points every 6 hours.");
+      showCustomMessage("You can only claim points every 6 hours.");
     }
   });
 
   inviteButton.addEventListener("click", () => {
-    const currentUrl = window.location.href;
     const inviteLink = `${TELEGRAM_BOT_URL}?start=${Date.now()}`;
-    inviteLinkDisplay.textContent = `Invite link: ${inviteLink}`;
     navigator.clipboard.writeText(inviteLink).then(() => {
-      alert("Invite link copied to clipboard!");
+      showCustomMessage("Invite link copied to clipboard! Share it with your friends to earn rewards.");
+    }).catch(err => {
+      console.error("Failed to copy invite link: ", err);
     });
   });
 
@@ -67,10 +79,12 @@ document.addEventListener("DOMContentLoaded", () => {
       // Reward the referrer
       const referrerPoints = parseInt(localStorage.getItem(`points_${referrerId}`)) || 0;
       localStorage.setItem(`points_${referrerId}`, referrerPoints + REFERRAL_REWARD);
-      alert(`You successfully invited a friend. Here is your reward of ${REFERRAL_REWARD} points!`);
+      showCustomMessage(`You successfully invited a friend. Here is your reward of ${REFERRAL_REWARD} points!`);
 
       // Redirect to Telegram bot
-      window.location.href = TELEGRAM_BOT_URL;
+      setTimeout(() => {
+        window.location.href = TELEGRAM_BOT_URL;
+      }, 1000); // 1 second delay to ensure message is shown
     }
   }
 
