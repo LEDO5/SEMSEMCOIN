@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let points = localStorage.getItem("points") || 0;
   let lastClaimTime = localStorage.getItem("lastClaimTime") || 0;
   const CLAIM_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
+  const REFERRAL_REWARD = 2500; // Points rewarded for successful referral
+  const TELEGRAM_BOT_URL = "https://t.me/semsemcoin_bot"; // Telegram bot URL
 
   function updatePoints() {
     points = localStorage.getItem("points") || 0;
@@ -36,14 +38,15 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.setItem("lastClaimTime", now);
       updatePoints();
       updateTimer();
+      window.location.href = TELEGRAM_BOT_URL; // Redirect to Telegram bot
     } else {
       alert("You can only claim points every 6 hours.");
     }
   });
 
   inviteButton.addEventListener("click", () => {
-    const currentUrl = window.location.href;
-    const inviteLink = `${currentUrl}?ref=${Date.now()}`;
+    const uniqueId = Date.now(); // Generate a unique ID for the referral link
+    const inviteLink = `${TELEGRAM_BOT_URL}?start=${uniqueId}`;
     inviteLinkDisplay.textContent = `Invite link: ${inviteLink}`;
     navigator.clipboard.writeText(inviteLink).then(() => {
       alert("Invite link copied to clipboard!");
@@ -57,6 +60,17 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("points", Number(points) + 1000);
     localStorage.setItem("ref", ref);
     updatePoints();
+
+    // Notify the referrer and reward them
+    const referrerId = localStorage.getItem("ref");
+    if (referrerId) {
+      // You would normally notify the referrer through a backend service.
+      // For this example, we'll just alert the user and give them points.
+      alert(`You were referred by ${referrerId}.`);
+      localStorage.setItem("points", Number(points) + REFERRAL_REWARD);
+      updatePoints();
+      window.location.href = TELEGRAM_BOT_URL; // Redirect to Telegram bot
+    }
   }
 
   updatePoints();
